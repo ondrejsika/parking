@@ -1,0 +1,33 @@
+{{- $ReleaseName := .Release.Name }}
+{{- $length := len .Values.hosts }}
+{{- if $length }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    release: {{ .Release.Name }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.clusterIssuer }}
+spec:
+  ingressClassName: nginx
+  tls:
+    {{- range .Values.hosts }}
+    - hosts:
+        - {{ . }}
+      secretName: {{ . | replace "." "-" }}-tls
+    {{- end }}
+  rules:
+    {{- range .Values.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $ReleaseName }}
+                port:
+                  name: http
+    {{- end }}
+{{- end }}

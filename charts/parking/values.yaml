@@ -1,0 +1,5 @@
+# Required
+hosts: []
+
+# Optional
+clusterIssuer: letsencrypt

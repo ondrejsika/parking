@@ -1,0 +1,4 @@
+See:
+{{- range .Values.hosts }}
+  - https://{{ . }}
+{{- end }}
